@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 python-dotenv
 argon2-cffi
+=======
+python-dotenv
+argon2-cffi
+>>>>>>> 55d886809bf96057da4983fd40d79350e1aeae07
