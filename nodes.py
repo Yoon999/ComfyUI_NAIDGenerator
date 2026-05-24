@@ -621,6 +621,67 @@ class V4CharacterPromptOption:
         return (option,)
 
 
+class V4CharacterPromptStack:
+    @classmethod
+    def INPUT_TYPES(s):
+        # 1. 뼈대가 되는 기본 입력
+        required = {
+            "character_count": ("INT", {"default": 1, "min": 1, "max": 5, "step": 1, "display": "number"}),
+        }
+        # 2. 최대 5명 분량의 입력칸을 미리 생성
+        for i in range(1, 6):
+            required[f"char_{i}_caption"] = ("STRING", {"multiline": True, "default": "",
+                                                        "tooltip": f"Character {i} Positive"})
+            required[f"char_{i}_negative"] = ("STRING", {"multiline": True, "default": "",
+                                                         "tooltip": f"Character {i} Negative"})
+            required[f"char_{i}_x"] = ("FLOAT",
+                                       {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.1, "display": "number"})
+            required[f"char_{i}_y"] = ("FLOAT",
+                                       {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.1, "display": "number"})
+
+        return {
+            "required": required,
+            "optional": {"option": ("NAID_OPTION",)}
+        }
+
+    RETURN_TYPES = ("NAID_OPTION",)
+    FUNCTION = "set_option"
+    CATEGORY = "NovelAI/v4"
+
+    def set_option(self, character_count, option=None, **kwargs):
+        option = copy.deepcopy(option) if option else {}
+
+        # 지정된 캐릭터 수(character_count) 만큼만 반복하며 데이터 추출
+        for i in range(1, character_count + 1):
+            cap = kwargs.get(f"char_{i}_caption", "")
+            neg = kwargs.get(f"char_{i}_negative", "")
+            cx = kwargs.get(f"char_{i}_x", 0.5)
+            cy = kwargs.get(f"char_{i}_y", 0.5)
+
+            if cap.strip():
+                if "v4_prompt" not in option:
+                    option["v4_prompt"] = {"caption": {"char_captions": []}, "use_coords": True, "use_order": True}
+                option["v4_prompt"]["caption"]["char_captions"].append({
+                    "char_caption": cap,
+                    "centers": [{"x": cx, "y": cy}]
+                })
+                option["v4_prompt"]["use_coords"] = True
+                option["v4_prompt"]["use_order"] = True
+
+            if neg.strip():
+                if "v4_negative_prompt" not in option:
+                    option["v4_negative_prompt"] = {"caption": {"char_captions": []}, "use_coords": True,
+                                                    "use_order": True}
+                option["v4_negative_prompt"]["caption"]["char_captions"].append({
+                    "char_caption": neg,
+                    "centers": [{"x": cx, "y": cy}]
+                })
+                option["v4_negative_prompt"]["use_coords"] = True
+                option["v4_negative_prompt"]["use_order"] = True
+
+        return (option,)
+
+
 NODE_CLASS_MAPPINGS = {
     "GenerateNAID": GenerateNAID,
     "ModelOptionNAID": ModelOption,
@@ -639,6 +700,7 @@ NODE_CLASS_MAPPINGS = {
     "V4BasePrompt": V4BasePrompt,
     "V4NegativePrompt": V4NegativePrompt,
     "V4CharacterPromptOptionNAID": V4CharacterPromptOption,
+    # "V4CharacterPromptStackNAID": V4CharacterPromptStack,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -659,4 +721,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "V4BasePrompt": "V4 Base Prompt ✒️🅝🅐🅘",
     "V4NegativePrompt": "V4 Negative Prompt ✒️🅝🅐🅘",
     "V4CharacterPromptOptionNAID": "V4 Character Prompt ✒️🅝🅐🅘",
+    # "V4CharacterPromptStackNAID": "V4 Character Prompt Stack ✒️🅝🅐🅘",
 }
