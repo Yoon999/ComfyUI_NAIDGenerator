@@ -580,8 +580,8 @@ class V4CharacterPromptOption:
                 "char_caption": ("STRING", {"multiline": True, "tooltip": "해당 캐릭터의 포지티브 프롬프트"}),
                 "negative_char_caption": ("STRING",
                                           {"multiline": True, "default": "", "tooltip": "해당 캐릭터의 네거티브 프롬프트 (선택사항)"}),
-                "center_x": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01, "display": "number"}),
-                "center_y": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01, "display": "number"}),
+                "center_x": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05, "display": "number"}),
+                "center_y": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05, "display": "number"}),
             },
             "optional": {"option": ("NAID_OPTION",)},
         }
